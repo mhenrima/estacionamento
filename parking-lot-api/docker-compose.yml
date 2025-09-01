@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5434:5432" # Usaremos a porta 5434 para não conflitar com outros projetos
+    volumes:
+      - parking_db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: parking
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U docker -d parking" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  parking_db_data:
