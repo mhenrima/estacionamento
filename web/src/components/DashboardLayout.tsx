@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Car, BarChart2, Users, Monitor, LogOut, KeySquare } from 'lucide-react';
+import { Car, BarChart2, Users, Monitor, LogOut, KeySquare, Settings } from 'lucide-react';
 import { useUser } from '../hooks/useUser';
 
 interface MenuItem {
@@ -15,6 +15,8 @@ const menuItems: MenuItem[] = [
     { path: '/dashboard/mensalistas', icon: <Users size={20} />, label: 'Cadastro de Mensalistas' },
     { path: '/dashboard/monitoramento', icon: <Monitor size={20} />, label: 'Monitoramento de Vagas' },
     { path: '/dashboard/relatorio', icon: <BarChart2 size={20} />, label: 'Relatório Diário', adminOnly: true },
+    { path: '/dashboard/configuracao', icon: <Settings size={20} />, label: 'Configurações', adminOnly: true },
+
 ];
 
 const SidebarMenuItem = ({ item }: { item: MenuItem }) => (

@@ -2,7 +2,9 @@
 import { db } from "@/db";
 import { vehicles, parkingRecords } from "@/db/schemas";
 import { BadRequestError, NotFoundError } from "@/http/errors";
-import { eq, and, isNull, desc } from "drizzle-orm";
+import { eq, and, isNull, desc, asc } from "drizzle-orm";
+import { parkingSpots } from "@/db/schemas"; // Importe o schema de vagas
+
 
 export class ParkingRecordUseCase {
     /**
@@ -32,14 +34,44 @@ export class ParkingRecordUseCase {
             throw new BadRequestError("Este veículo já se encontra no estacionamento.");
         }
 
-        // 3. Criar o novo registro de entrada
+
+
+        const availableSpot = await db.query.parkingSpots.findFirst({
+            where: eq(parkingSpots.status, 'available'),
+            orderBy: [asc(parkingSpots.code)] // Ordena por V001, V002, etc. e pega a primeira
+        });
+
+        if (!availableSpot) {
+            throw new BadRequestError("Estacionamento lotado.");
+        }
+        // -> Nova Lógica: Criar o registro VINCULADO à vaga
         const [newRecord] = await db.insert(parkingRecords).values({
             vehicleId: vehicle.id,
+            parkingSpotId: availableSpot.id, // Vincula a vaga
         }).returning();
+
+        // -> Nova Lógica: Marcar a vaga como ocupada
+        await db.update(parkingSpots)
+            .set({ status: 'occupied' })
+            .where(eq(parkingSpots.id, availableSpot.id));
 
         return newRecord;
     }
 
+    private _calculatePrice(entryAt: Date, exitAt: Date): number {
+        const durationInMillis = exitAt.getTime() - entryAt.getTime();
+        // Converte a duração de milissegundos para horas
+        const durationInHours = Math.ceil(durationInMillis / (1000 * 60 * 60));
+
+        if (durationInHours <= 1) {
+            return 5.00; // R$ 5 para a primeira hora (ou menos)
+        }
+
+        const additionalHours = durationInHours - 1;
+        const price = 5.00 + (additionalHours * 3.00); // R$ 5 da primeira hora + R$ 3 por hora adicional
+
+        return price;
+    }
     /**
      * Registra a saída de um veículo pela placa.
      */
@@ -67,11 +99,23 @@ export class ParkingRecordUseCase {
             throw new NotFoundError("Veículo não possui registro de entrada ativo.");
         }
 
-        // 3. Atualizar o registro com a data e hora da saída
+        const exitAt = new Date();
+        // -> 1. Chama o método de cálculo
+        const price = this._calculatePrice(activeRecord.entryAt, exitAt);
+
+        // -> 2. Atualiza o registro com a data da saída E o preço calculado
         const [updatedRecord] = await db.update(parkingRecords)
-            .set({ exitAt: new Date() })
+            .set({
+                exitAt: exitAt,
+                totalPrice: price.toString() // Drizzle espera o decimal como string
+            })
             .where(eq(parkingRecords.id, activeRecord.id))
             .returning();
+
+        await db.update(parkingSpots)
+            .set({ status: 'available' })
+            .where(eq(parkingSpots.id, activeRecord.parkingSpotId));
+
 
         return updatedRecord;
     }

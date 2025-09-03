@@ -8,6 +8,8 @@ import { MonitoramentoPage } from './pages/MonitoramentoPage';
 import { RelatorioPage } from './pages/RelatorioPage';
 import { VehiclesPage } from './pages/VehiclesPage';
 import { UserProvider, useUser } from './hooks/useUser';
+import { ConfiguracaoPage } from './pages/ConfiguracaoPage'; // <-- importe a nova página
+
 
 // Rota para páginas públicas: se o usuário estiver logado, redireciona para o dashboard.
 const PublicRoute = ({ children }: { children: ReactNode }) => {
@@ -59,6 +61,10 @@ export default function App() {
             <Route
               path="relatorio"
               element={<AdminRoute> <RelatorioPage /> </AdminRoute>}
+            />
+            <Route
+              path="configuracao"
+              element={<AdminRoute> <ConfiguracaoPage /> </AdminRoute>}
             />
           </Route>
         </Routes>

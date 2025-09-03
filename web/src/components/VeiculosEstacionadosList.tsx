@@ -9,6 +9,10 @@ interface Props {
     onExitSuccess: () => void;
 }
 
+interface ExitResponse extends ActiveRecord {
+    totalPrice: string | null;
+}
+
 export function VeiculosEstacionadosList({ records, onExitSuccess }: Props) {
 
     async function handleRegisterExit(plate: string) {
@@ -20,10 +24,21 @@ export function VeiculosEstacionadosList({ records, onExitSuccess }: Props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ plate }),
             });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Erro desconhecido.');
+            // -> 1. Tipamos a resposta da API
+            const data: any = await response.json();
 
-            alert(`Saída do veículo ${plate.toUpperCase()} registrada com sucesso!`);
+            if (!response.ok) throw new Error(data.message || 'Erro desconhecido.');
+            const successData = data as ExitResponse;
+
+
+            // -> 2. Formatamos o preço para o padrão brasileiro e exibimos no alerta
+            const price = parseFloat(successData.totalPrice || '0').toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+            });
+
+            alert(`Saída registrada com sucesso!\n\nValor a pagar: ${price}`);
+
             onExitSuccess();
         } catch (error: any) {
             alert(`Falha ao registrar saída: ${error.message}`);
