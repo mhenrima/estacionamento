@@ -8,10 +8,9 @@ import { MonitoramentoPage } from './pages/MonitoramentoPage';
 import { RelatorioPage } from './pages/RelatorioPage';
 import { VehiclesPage } from './pages/VehiclesPage';
 import { UserProvider, useUser } from './hooks/useUser';
-import { ConfiguracaoPage } from './pages/ConfiguracaoPage'; // <-- importe a nova página
+import { ConfiguracaoPage } from './pages/ConfiguracaoPage';
 
 
-// Rota para páginas públicas: se o usuário estiver logado, redireciona para o dashboard.
 const PublicRoute = ({ children }: { children: ReactNode }) => {
   const { user, isLoading } = useUser();
   if (isLoading) {
@@ -20,7 +19,6 @@ const PublicRoute = ({ children }: { children: ReactNode }) => {
   return !user ? <>{children}</> : <Navigate to="/dashboard" />;
 };
 
-// Rota para páginas privadas: se o usuário não estiver logado, redireciona para o login.
 const PrivateRoute = ({ children }: { children: ReactNode }) => {
   const { user, isLoading } = useUser();
   if (isLoading) {
@@ -29,7 +27,6 @@ const PrivateRoute = ({ children }: { children: ReactNode }) => {
   return user ? <>{children}</> : <Navigate to="/" />;
 };
 
-// Rota para páginas de admin: se o usuário não for admin, redireciona para o dashboard.
 const AdminRoute = ({ children }: { children: ReactNode }) => {
   const { user } = useUser();
   return user?.role === 'admin' ? <>{children}</> : <Navigate to="/dashboard" />;

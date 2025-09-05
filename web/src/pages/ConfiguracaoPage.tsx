@@ -1,5 +1,4 @@
-// web/src/pages/ConfiguracaoPage.tsx
-// (Crie este novo arquivo)
+
 import { useState, type FormEvent } from "react";
 
 const API_BASE_URL = 'http://localhost:3000';

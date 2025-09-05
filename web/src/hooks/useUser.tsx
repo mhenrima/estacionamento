@@ -1,7 +1,6 @@
-import { useState, useEffect, useContext, createContext, type ReactNode } from 'react'; // <-- A CORREÇÃO ESTÁ AQUI
+import { useState, useEffect, useContext, createContext, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// A interface User que já usamos antes
 export interface User {
     id: string;
     name: string;
@@ -10,17 +9,15 @@ export interface User {
     createdAt: string;
 }
 
-// O que nosso Context irá fornecer
 interface UserContextType {
     user: User | null;
-    isLoading: boolean; // Para sabermos se a verificação inicial está acontecendo
+    isLoading: boolean;
     logout: () => void;
-    refetchUser: () => void; // Para atualizar os dados do usuário após o login
+    refetchUser: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// O Provedor, que vai "abraçar" nossa aplicação
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +49,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         try {
             await fetch(`${API_BASE_URL}/sessions/logout`, { method: 'POST', credentials: 'include' });
             setUser(null);
-            navigate('/'); // Redireciona para a tela de login
+            navigate('/');
         } catch (error) {
             console.error('Erro ao fazer logout:', error);
         }
@@ -65,7 +62,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-// O Hook personalizado que nossos componentes usarão
 export const useUser = () => {
     const context = useContext(UserContext);
     if (context === undefined) {

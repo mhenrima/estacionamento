@@ -11,20 +11,16 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
-    // "erasableSyntaxOnly": true, <-- REMOVIDO: Opção desconhecida
-    // "noUncheckedSideEffectImports": true <-- REMOVIDO: Opção desconhecida
   },
   "include": [
     "src"

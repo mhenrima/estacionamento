@@ -4,7 +4,6 @@ import { Car } from "lucide-react";
 const FIPE_API_URL = 'https://parallelum.com.br/fipe/api/v1/carros';
 const API_BASE_URL = 'http://localhost:3000/api';
 
-// Tipagem para os dados que virão da API FIPE
 interface FipeData {
     codigo: string;
     nome: string;
@@ -13,50 +12,41 @@ interface FipeData {
 export function VehiclesPage() {
     const [feedback, setFeedback] = useState({ message: '', isError: false });
 
-    // --- NOVOS ESTADOS PARA A API FIPE ---
     const [marcas, setMarcas] = useState<FipeData[]>([]);
     const [modelos, setModelos] = useState<FipeData[]>([]);
     const [marcaSelecionada, setMarcaSelecionada] = useState('');
-    // ------------------------------------
 
-    // --- NOVOS EFEITOS PARA BUSCAR OS DADOS ---
-    // Efeito para buscar as marcas quando o componente é montado
     useEffect(() => {
         fetch(`${FIPE_API_URL}/marcas`)
             .then(res => res.json())
             .then(data => setMarcas(data))
             .catch(err => console.error("Falha ao buscar marcas:", err));
-    }, []); // Array vazio garante que rode apenas uma vez
-
-    // Efeito para buscar os modelos sempre que uma nova marca for selecionada
+    }, []);
     useEffect(() => {
         if (marcaSelecionada) {
-            setModelos([]); // Limpa a lista de modelos antigos
+            setModelos([]);
             fetch(`${FIPE_API_URL}/marcas/${marcaSelecionada}/modelos`)
                 .then(res => res.json())
                 .then(data => setModelos(data.modelos))
                 .catch(err => console.error("Falha ao buscar modelos:", err));
         } else {
-            setModelos([]); // Garante que a lista de modelos esteja vazia se nenhuma marca for selecionada
+            setModelos([]);
         }
-    }, [marcaSelecionada]); // Este efeito depende do estado 'marcaSelecionada'
-    // ------------------------------------------
+    }, [marcaSelecionada]);
 
     async function handleCreateVehicle(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setFeedback({ message: '', isError: false });
 
-        // -> CORREÇÃO AQUI (1/3): Salva a referência do formulário antes do 'await'
         const form = event.currentTarget;
 
-        // -> CORREÇÃO AQUI (2/3): Usa a referência salva
         const formData = new FormData(form);
 
         const brandCode = formData.get('brand_code');
         const selectedBrand = marcas.find(marca => marca.codigo === brandCode);
 
         const payload = {
-            brand: selectedBrand ? selectedBrand.nome : '', // Envia o nome da marca
+            brand: selectedBrand ? selectedBrand.nome : '',
             model: formData.get('model') as string,
             year: Number(formData.get('year')),
             color: formData.get('color') as string,
@@ -64,7 +54,6 @@ export function VehiclesPage() {
         };
 
         try {
-            // Note que removi o 'credentials: include' pois você removeu a autenticação do backend
             const response = await fetch(`${API_BASE_URL}/vehicles`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,10 +67,9 @@ export function VehiclesPage() {
 
             setFeedback({ message: 'Veículo cadastrado com sucesso!', isError: false });
 
-            // -> CORREÇÃO AQUI (3/3): Usa a referência salva para limpar o formulário
             form.reset();
 
-            setMarcaSelecionada(''); // Limpa a seleção da marca após o sucesso
+            setMarcaSelecionada('');
         } catch (error: any) {
             setFeedback({ message: error.message, isError: true });
         }
@@ -96,7 +84,6 @@ export function VehiclesPage() {
 
                 <form onSubmit={handleCreateVehicle} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* --- CAMPO MARCA (AGORA É UM SELECT) --- */}
                         <div>
                             <label htmlFor="brand_code" className="block text-sm font-medium text-gray-700">Marca</label>
                             <select
@@ -115,7 +102,6 @@ export function VehiclesPage() {
                                 ))}
                             </select>
                         </div>
-                        {/* --- CAMPO MODELO (AGORA É UM SELECT) --- */}
                         <div>
                             <label htmlFor="model" className="block text-sm font-medium text-gray-700">Modelo</label>
                             <select
@@ -134,7 +120,6 @@ export function VehiclesPage() {
                             </select>
                         </div>
                     </div>
-                    {/* Campos restantes continuam iguais */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="year" className="block text-sm font-medium text-gray-700">Ano</label>

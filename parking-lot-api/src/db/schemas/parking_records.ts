@@ -1,9 +1,8 @@
-// src/db/schemas/parking_records.ts
 import { createId } from "@paralleldrive/cuid2";
 import { pgTable, text, timestamp, index, decimal } from "drizzle-orm/pg-core";
 import { vehicles } from "./vehicles";
 import { relations } from "drizzle-orm";
-import { parkingSpots } from "./parking_spots"; // Importe o novo schema
+import { parkingSpots } from "./parking_spots";
 
 
 export const parkingRecords = pgTable("parking_records", {

@@ -2,7 +2,6 @@ import { db } from "@/db";
 import { vehicles } from "@/db/schemas";
 import { BadRequestError } from "@/http/errors";
 
-// 1. A interface agora é mais simples, sem 'organizationId'
 interface CreateVehicleParams {
     plate: string;
     brand: string;
@@ -12,12 +11,11 @@ interface CreateVehicleParams {
 }
 
 export class VehiclesUseCase {
-    // 2. O método também não espera mais o 'organizationId'
     async createVehicle({ plate, brand, model, year, color }: CreateVehicleParams) {
         try {
             const [newVehicle] = await db
                 .insert(vehicles)
-                .values({ // 3. A inserção no banco também foi simplificada
+                .values({
                     plate: plate.toUpperCase(),
                     brand,
                     model,

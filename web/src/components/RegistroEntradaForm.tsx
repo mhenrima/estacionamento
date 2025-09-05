@@ -1,4 +1,3 @@
-// src/components/RegistroEntradaForm.tsx
 import { useState, type FormEvent } from "react";
 import { LogIn } from 'lucide-react';
 
@@ -27,7 +26,7 @@ export function RegistroEntradaForm({ onEntrySuccess }: Props) {
 
             setFeedback({ message: `Entrada do veículo ${plate.toUpperCase()} registrada!`, isError: false });
             setPlate('');
-            onEntrySuccess(); // Avisa o componente pai para atualizar a lista
+            onEntrySuccess();
         } catch (error: any) {
             setFeedback({ message: error.message, isError: true });
         }

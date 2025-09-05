@@ -10,7 +10,6 @@ import { UnauthorizedError } from "@/http/errors";
 const authUseCase = new AuthUseCase();
 
 export default new Elysia({ prefix: "/api" })
-    // Rota Pública: Registro
     .post(
         "/users",
         async ({ body, set }) => {
@@ -20,7 +19,6 @@ export default new Elysia({ prefix: "/api" })
         },
         { body: registerBodySchema, detail: { tags: ["Auth"], summary: "Register a new user" } }
     )
-    // Rota Pública: Login
     .post(
         "/sessions",
         async ({ body, cookie }) => {
@@ -33,7 +31,7 @@ export default new Elysia({ prefix: "/api" })
             cookie.auth.set({
                 value: sessionId,
                 httpOnly: true,
-                maxAge: 60 * 60 * 24 * 7, // 7 dias
+                maxAge: 60 * 60 * 24 * 7,
                 path: "/",
             });
 
@@ -41,24 +39,22 @@ export default new Elysia({ prefix: "/api" })
         },
         { body: createSessionBodySchema, detail: { tags: ["Auth"], summary: "Authenticate" } }
     )
-    // Rota Protegida: Perfil do Usuário
     .get(
         "/me",
         async ({ cookie, set }) => {
-            const sessionId = cookie.auth.value; // 1. Pega o ID da sessão do cookie
-
+            const sessionId = cookie.auth.value;
             if (!sessionId) {
                 throw new UnauthorizedError("Authentication is required.");
             }
 
-            const user = await authUseCase.getUserFromSession(sessionId); // 2. Busca o usuário
+            const user = await authUseCase.getUserFromSession(sessionId);
 
             if (!user) {
-                cookie.auth.remove(); // 3. Se a sessão for inválida, limpa o cookie
+                cookie.auth.remove();
                 throw new UnauthorizedError("Invalid session.");
             }
 
-            return user; // 4. Retorna o usuário
+            return user;
         },
         {
             response: { 200: userProfileResponseSchema },

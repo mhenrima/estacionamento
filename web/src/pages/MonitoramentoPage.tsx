@@ -1,5 +1,4 @@
-// web/src/pages/MonitoramentoPage.tsx
-// (Substitua o conteúdo deste arquivo se ele já existir)
+
 import { useEffect, useState } from "react";
 import { Car } from 'lucide-react';
 
@@ -22,7 +21,6 @@ export function MonitoramentoPage() {
             setSpots(data);
         };
         fetchSpots();
-        // Atualiza a cada 10 segundos
         const interval = setInterval(fetchSpots, 10000);
         return () => clearInterval(interval);
     }, []);

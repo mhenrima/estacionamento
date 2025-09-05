@@ -1,4 +1,3 @@
-// src/components/VeiculosEstacionadosList.tsx
 import { LogOut } from "lucide-react";
 import type { ActiveRecord } from "../pages/RegistroPage";
 
@@ -24,14 +23,12 @@ export function VeiculosEstacionadosList({ records, onExitSuccess }: Props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ plate }),
             });
-            // -> 1. Tipamos a resposta da API
             const data: any = await response.json();
 
             if (!response.ok) throw new Error(data.message || 'Erro desconhecido.');
             const successData = data as ExitResponse;
 
 
-            // -> 2. Formatamos o preço para o padrão brasileiro e exibimos no alerta
             const price = parseFloat(successData.totalPrice || '0').toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',

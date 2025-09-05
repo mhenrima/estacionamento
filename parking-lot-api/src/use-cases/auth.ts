@@ -7,11 +7,9 @@ import { randomBytes } from "crypto";
 import fs from "fs";
 import path from "path";
 
-// Interfaces
 interface CreateUserParams { name: string; email: string; password_raw: string; }
 interface CreateSessionParams { email: string; password_raw: string; }
 
-// Lógica de Persistência da Sessão em Arquivo
 const SESSIONS_FILE_PATH = path.join(process.cwd(), "sessions.json");
 
 function loadSessions(): Record<string, { userId: string }> {

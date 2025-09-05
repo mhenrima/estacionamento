@@ -59,7 +59,6 @@ export function AuthPage() {
                 throw new Error('Credenciais inválidas.');
             }
 
-            // Após o sucesso do login, atualiza o estado global e navega
             await refetchUser();
             navigate('/dashboard');
 

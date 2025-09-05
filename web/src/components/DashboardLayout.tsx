@@ -11,7 +11,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
     { path: '/dashboard/registro', icon: <Car size={20} />, label: 'Registro de Entrada/Saída' },
-    { path: '/dashboard/vehicles', icon: <KeySquare size={20} />, label: 'Cadastro de Veículos' }, // <-- NOVO MENU AQUI
+    { path: '/dashboard/vehicles', icon: <KeySquare size={20} />, label: 'Cadastro de Veículos' },
     { path: '/dashboard/mensalistas', icon: <Users size={20} />, label: 'Cadastro de Mensalistas' },
     { path: '/dashboard/monitoramento', icon: <Monitor size={20} />, label: 'Monitoramento de Vagas' },
     { path: '/dashboard/relatorio', icon: <BarChart2 size={20} />, label: 'Relatório Diário', adminOnly: true },
