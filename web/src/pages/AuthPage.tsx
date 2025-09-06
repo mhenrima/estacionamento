@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import { LandPlot, LogOut, UserCircle } from 'lucide-react';
+import { LandPlot } from 'lucide-react';
 
 const API_BASE_URL = 'http://localhost:3000/api';
 

@@ -3,7 +3,8 @@ import authRoutes from "./http/routes/auth";
 import { cors } from "@elysiajs/cors";
 import { parkingSpotRoutes, vehicles } from "./http/routes";
 import { parkingRecordRoutes } from "./http/routes";
-import { reportRoutes } from "./http/routes"; // <-- Importe aqui
+import { monthlyParkerRoutes } from "./http/routes";
+import { reportRoutes } from "./http/routes"
 
 
 
@@ -19,7 +20,9 @@ const app = new Elysia()
   .use(vehicles)
   .use(parkingRecordRoutes)
   .use(parkingSpotRoutes)
-  .use(reportRoutes);
+  .use(reportRoutes)
+  .use(monthlyParkerRoutes);
+
 
 
 
