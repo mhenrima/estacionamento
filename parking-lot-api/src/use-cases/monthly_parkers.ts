@@ -1,4 +1,3 @@
-// src/use-cases/monthly_parkers.ts
 import { db } from "@/db";
 import { vehicles, monthlyParkers } from "@/db/schemas";
 import { BadRequestError, NotFoundError } from "@/http/errors";
@@ -14,9 +13,7 @@ interface CreateMonthlyParkerParams {
 }
 
 export class MonthlyParkerUseCase {
-    /**
-     * Lista todos os mensalistas
-     */
+
     async listAll() {
         const parkers = await db.query.monthlyParkers.findMany({
             with: {
@@ -29,38 +26,52 @@ export class MonthlyParkerUseCase {
         return parkers;
     }
 
-    /**
-     * Cria um novo mensalista
-     */
+
     async create(data: CreateMonthlyParkerParams) {
-        // 1. Encontrar o veículo pela placa para obter o ID
+        console.log("[USE CASE] Tentando criar mensalista com os dados:", data);
+
         const vehicle = await db.query.vehicles.findFirst({
             where: eq(vehicles.plate, data.plate.toUpperCase()),
         });
 
         if (!vehicle) {
+            console.error("[USE CASE] ERRO: Veículo com a placa informada não foi encontrado.");
             throw new NotFoundError("Veículo não cadastrado. Cadastre o veículo antes de associá-lo a um mensalista.");
         }
 
-        // 2. Verificar se o veículo já está associado a outro mensalista
         const existingParkerForVehicle = await db.query.monthlyParkers.findFirst({
             where: eq(monthlyParkers.vehicleId, vehicle.id)
         });
 
         if (existingParkerForVehicle) {
+            console.error("[USE CASE] ERRO: Veículo já associado a outro mensalista.");
             throw new BadRequestError("Este veículo já está associado a um plano de mensalista.");
         }
 
-        // 3. Criar o novo registro de mensalista
-        const [newParker] = await db.insert(monthlyParkers).values({
-            name: data.name,
-            document: data.document,
-            email: data.email,
-            phone: data.phone,
-            planStartDate: new Date(data.planStartDate),
-            vehicleId: vehicle.id,
-        }).returning();
+        try {
+            const [newParker] = await db.insert(monthlyParkers).values({
+                name: data.name,
+                document: data.document,
+                email: data.email,
+                phone: data.phone,
+                planStartDate: new Date(data.planStartDate),
+                vehicleId: vehicle.id,
+            }).returning();
+            console.log("[USE CASE] Mensalista criado com sucesso no banco de dados.");
 
-        return newParker;
+            return newParker;
+        }
+        catch (error: any) {
+            console.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            console.error("!! [USE CASE] OCORREU UM ERRO AO INSERIR NO BANCO !!");
+            console.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            console.error("Erro capturado:", error);
+
+            if (error.code === '23505' && error.constraint_name?.includes('document_unique')) {
+                throw new BadRequestError("Já existe um mensalista cadastrado com este documento.");
+            }
+            throw error;
+        }
+
     }
 }

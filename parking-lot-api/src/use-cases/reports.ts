@@ -1,4 +1,3 @@
-// src/use-cases/reports.ts
 import { db } from "@/db";
 import { parkingRecords } from "@/db/schemas";
 import { sql } from "drizzle-orm";
@@ -33,13 +32,11 @@ export class ReportsUseCase {
         const summaryMap = new Map<string, Partial<DailySummary>>();
 
         for (const entry of entriesByDay) {
-            // -> CORREÇÃO AQUI: Usamos a string de data diretamente, sem conversões
             const date = entry.date;
             summaryMap.set(date, { ...summaryMap.get(date), date, entries: entry.count });
         }
 
         for (const exit of exitsByDay) {
-            // -> CORREÇÃO AQUI: Usamos a string de data diretamente, sem conversões
             const date = exit.date;
             summaryMap.set(date, { ...summaryMap.get(date), date, exits: exit.count, revenue: exit.revenue });
         }

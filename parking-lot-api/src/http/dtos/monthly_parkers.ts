@@ -1,4 +1,3 @@
-// src/http/dtos/monthly_parkers.ts
 import { t } from "elysia";
 
 export const createMonthlyParkerSchema = t.Object({

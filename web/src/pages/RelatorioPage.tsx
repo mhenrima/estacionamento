@@ -1,10 +1,8 @@
-// src/pages/RelatorioPage.tsx
 import { useEffect, useState } from "react";
 import { DollarSign, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
-// Interface para os dados do relatório
 interface DailyReport {
     date: string;
     entries: number;
@@ -12,13 +10,11 @@ interface DailyReport {
     revenue: number;
 }
 
-// Função para formatar data (ex: 05/09/2025)
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(date);
 };
 
-// Função para formatar moeda (ex: R$ 50,00)
 const formatCurrency = (value: number) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
